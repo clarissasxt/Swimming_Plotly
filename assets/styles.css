@@ -13,8 +13,8 @@
 }
 
 #graph-dropdown .Select-menu-outer {
-    background-color: rgb(158, 156, 156); /* Light blue color */
-    border: 1px solid #add8e6;
+    background-color: rgb(158, 156, 156); 
+    border: 1px solid white;
 }
 
 #graph-dropdown .Select-value-label {
@@ -28,6 +28,14 @@
 
 /* this colors the input box text and x  of multi dropdown*/
 #graph-dropdown .Select--multi .Select-value {
+    color: white;
+}
+
+#graph-dropdown .Select-control .Select-clear-zone {
+    color: white;
+}
+
+#graph-dropdown .Select-control span .Select-arrow-zone {
     color: white;
 }
 

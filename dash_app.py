@@ -30,7 +30,8 @@ app.layout = html.Div([
                 {'label': 'Speed', 'value': 'Speed'},
                 {'label': 'Wrist', 'value': 'Wrist'},
                 {'label': 'Elbow', 'value': 'Elbow'},
-                {'label': 'Hip', 'value': 'Hip'}
+                {'label': 'Hip', 'value': 'Hip'},
+                {'label': 'Knee', 'value': 'Knee'}
             ],
             value=['Speed','Wrist', 'Hip'], # default plots shown on screen
             multi=True,
@@ -86,6 +87,11 @@ def update_graph(selected_graphs, n_intervals):
             'left': go.Scatter(x=x, y=data['23'], mode='lines', name='Left hip', line=dict(width=1)),
             'right': go.Scatter(x=x, y=data['24'], mode='lines', name='Right hip', line=dict(width=1)),
             'title': 'Hip Movements'
+        },
+        'Knee': {
+            'left': go.Scatter(x=x, y=data['25'], mode='lines', name='Left knee', line=dict(width=1)),
+            'right': go.Scatter(x=x, y=data['26'], mode='lines', name='Right knee', line=dict(width=1)),
+            'title': 'Knee Movements'
         }
     }
 
@@ -97,7 +103,13 @@ def update_graph(selected_graphs, n_intervals):
                 fig.add_trace(figures[graph_type]['left'])
             if 'right' in figures[graph_type]:
                 fig.add_trace(figures[graph_type]['right'])
-            fig.update_layout(title=figures[graph_type]['title'], xaxis_title='Frame Index', yaxis_title='Pixel Position')
+            fig.update_layout(
+                title=figures[graph_type]['title'], 
+                xaxis_title='Frame Index', 
+                yaxis_title='Pixel Position',
+                margin=dict(t=50, b=30, l=30, r=30), 
+                height=350 # height of graph
+                )
 
             graph_components.append(dbc.Col(dcc.Graph(figure=fig), width=4))
 
