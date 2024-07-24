@@ -10,9 +10,8 @@ import numpy as np
 from yolov8_utils import write_pose_video
 import dash_bootstrap_components as dbc
 
-CSV_FILE = 'pose.csv'
-VIDEO_FILE = 'DJI_0087.MP4'
-OUTPUT_VISUALIZATION_FILE = 'visualization_output.mp4'
+CSV_FILE = 'keypoints.csv'
+VIDEO_FILE = 'DJI_0886.MP4'
 
 external_stylesheets = [dbc.themes.BOOTSTRAP, '/assets/styles.css']
 
@@ -21,20 +20,17 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 VIDEO_HEIGHT = 360  
 VIDEO_WIDTH = 640
 
-# Define the layout using Dash Bootstrap Components
 app.layout = html.Div([
     dbc.Row([
         dbc.Col(dcc.Dropdown(
             id='graph-dropdown',
             options=[
-                {'label': 'Speed', 'value': 'Speed'},
-                {'label': 'Nose', 'value': 'Nose'},
                 {'label': 'Wrist', 'value': 'Wrist'},
                 {'label': 'Elbow', 'value': 'Elbow'},
                 {'label': 'Hip', 'value': 'Hip'},
                 {'label': 'Knee', 'value': 'Knee'}
             ],
-            value=['Speed','Nose', 'Wrist', 'Hip'], # default plots shown on screen
+            value=['Wrist', 'Elbow'], # default plots shown on screen
             multi=True,
             className='dropdown-bar'
         )),
@@ -53,7 +49,7 @@ app.layout = html.Div([
 current_frame = [None]
 frame_lock = threading.Lock()
 
-t1 = threading.Thread(target=write_pose_video, args=(VIDEO_FILE, CSV_FILE, OUTPUT_VISUALIZATION_FILE, frame_lock, current_frame))
+t1 = threading.Thread(target=write_pose_video, args=(VIDEO_FILE, CSV_FILE, frame_lock, current_frame))
 t1.start()
 
 @app.callback(
@@ -70,33 +66,24 @@ def update_graph(selected_graphs, n_intervals):
     x = np.arange(len(data))
 
     figures = {
-        'Speed': {
-            'left': go.Scatter(x=x, y=data['kp_0_x'], mode='lines', name='Speed', line=dict(width=1)),
-            'title': 'Speed'
-        },
-        'Nose': {
-            'left': go.Scatter(x=x, y=data['kp_0_x'], mode='lines', name='Nose X', line=dict(width=1)),
-            'right': go.Scatter(x=x, y=data['kp_0_y'], mode='lines', name='Nose Y', line=dict(width=1)),
-            'title': 'Nose Movements'
-        },
         'Wrist': {
-            'left': go.Scatter(x=x, y=data['kp_9_x'], mode='lines', name='Left wrist X', line=dict(width=1)),
-            'right': go.Scatter(x=x, y=data['kp_10_x'], mode='lines', name='Right wrist X', line=dict(width=1)),
+            'left': go.Scatter(x=x, y=data['Left Wrist'], mode='lines', name='Left Wrist', line=dict(width=1)),
+            'right': go.Scatter(x=x, y=data['Right Wrist'], mode='lines', name='Right Wrist', line=dict(width=1)),
             'title': 'Wrist Movements'
         },
         'Elbow': {
-            'left': go.Scatter(x=x, y=data['kp_7_x'], mode='lines', name='Left elbow X', line=dict(width=1)),
-            'right': go.Scatter(x=x, y=data['kp_8_x'], mode='lines', name='Right elbow X', line=dict(width=1)),
+            'left': go.Scatter(x=x, y=data['Left Elbow'], mode='lines', name='Left Elbow', line=dict(width=1)),
+            'right': go.Scatter(x=x, y=data['Right Elbow'], mode='lines', name='Right Elbow', line=dict(width=1)),
             'title': 'Elbow Movements'
         },
         'Hip': {
-            'left': go.Scatter(x=x, y=data['kp_11_x'], mode='lines', name='Left hip X', line=dict(width=1)),
-            'right': go.Scatter(x=x, y=data['kp_12_x'], mode='lines', name='Right hip X', line=dict(width=1)),
+            'left': go.Scatter(x=x, y=data['Left Hip'], mode='lines', name='Left Hip', line=dict(width=1)),
+            'right': go.Scatter(x=x, y=data['Right Hip'], mode='lines', name='Right Hip', line=dict(width=1)),
             'title': 'Hip Movements'
         },
         'Knee': {
-            'left': go.Scatter(x=x, y=data['kp_13_x'], mode='lines', name='Left knee X', line=dict(width=1)),
-            'right': go.Scatter(x=x, y=data['kp_14_x'], mode='lines', name='Right knee X', line=dict(width=1)),
+            'left': go.Scatter(x=x, y=data['Left Knee'], mode='lines', name='Left Knee', line=dict(width=1)),
+            'right': go.Scatter(x=x, y=data['Right Knee'], mode='lines', name='Right Knee', line=dict(width=1)),
             'title': 'Knee Movements'
         }
     }
@@ -114,7 +101,7 @@ def update_graph(selected_graphs, n_intervals):
                 xaxis_title='Frame Index', 
                 yaxis_title='Pixel Position',
                 margin=dict(t=50, b=30, l=30, r=30), 
-                height=350 # height of graph
+                height=350
                 )
 
             graph_components.append(dbc.Col(dcc.Graph(figure=fig), width=4))
