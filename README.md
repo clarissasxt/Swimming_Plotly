@@ -1,4 +1,4 @@
-##Swmming Visualisation 
+Swmming Visualisation 
 
 1. Download files from GitHub
 2. Create a new virtual environment in python (version 3.12) 
